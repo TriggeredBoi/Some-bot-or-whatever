@@ -23,7 +23,7 @@ class custom_playerlist_list(list):
         
         return list.remove(self, target)
 
-
+#TODO: jesus fuck like redo all this shit
 class Server:
     def __init__(self, server):
         self.guild = server 
