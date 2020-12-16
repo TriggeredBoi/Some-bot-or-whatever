@@ -12,8 +12,6 @@ class Player:
         self.listening = False
 
 
-
-
     async def kill(self):
-        await self.memberref.remove_roles(self.server.player_role)
-        await self.memberref.add_roles(self.server.ghost_role)
+        await self.member.remove_roles(self.server.player_role)
+        await self.member.add_roles(self.server.ghost_role)

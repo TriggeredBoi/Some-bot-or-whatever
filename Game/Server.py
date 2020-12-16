@@ -2,28 +2,26 @@ import discord
 from discord.ext import commands
 from Game.Player import Player
 
-class custom_playerlist_list(list):
-    def __init__(self, server):
+
+
+class playerdict(dict):
+    def __init__(self, guild: discord.Guild):
         super().__init__(self)
-        self.parentserver = server
-
-
-    async def append(self, target): #should only recieve player objects
-        self.parentserver.userlist.append(target.member) #and we want to keep track of their respective users.
-        
-        await target.member.add_roles(self.parentserver.player_role)
-        await target.member.remove_roles(self.parentserver.ghost_role) #doesn't hurt to be redundant
-        
-        return list.append(self, target)
+        self.guild = guild
     
-    async def remove(self, target):
-        self.parentserver.userlist.remove(target.member)
-        
-        await target.member.remove_roles(self.parentserver.player_role, self.parentserver.ghost_role)
-        
-        return list.remove(self, target)
+    async def add(self, member: discord.Member): #key by id instead maybe?
+        if self.get(member):
+            return
+        self[member] = Player(member)
+        #I plan on refactoring Player and make *it* handle adding roles; Remember to remove this later
+        await member.add_roles(self.guild.player_role)
+        await member.remove_roles(self.guild.ghost_role) #doesn't hurt to be redundant
+    
+    async def remove(self, player: Player):
+        await player.member.remove_roles(self.guild.player_role, self.guild.ghost_role)
+        del self[player.member]
 
-#TODO: jesus fuck like redo all this shit
+
 class Server:
     def __init__(self, server):
         self.guild = server 
@@ -31,45 +29,26 @@ class Server:
 
         self.update_links()
 
+        """ bad. horrible. horrendous. terrible. absolutely disgusting.
         self.userlist = []   #should be always parallel to playerlist, except hold member refs instead of player objects for easy comparison in stuff like addplayer
         self.playerlist = custom_playerlist_list(self) #every addition to playerlist SHOULD automatically update userlist
         #REMINDER: do not directly manipulate userlist because of the above.
+        """
+        self.players = playerdict(self.guild) #{member ID: player object}
 
 
-    async def addplayer(self, target):
-        if not self.getplayer(target):
-            await self.playerlist.append(Player(target)) 
+    async def addplayer(self, member):
+        if not self.players.get(member):
+            await self.players.add(member) 
             return True
         else: return False
     
-    
-    async def removeplayer(self, target):
-        if target := self.getplayer(target):
-            await self.playerlist.remove(target) 
+
+    async def removeplayer(self, member):
+        if player := self.players.get(member):
+            await self.players.remove(player) 
             return True
         else: return False
-
-
-    def getplayer(self, target):
-        if isinstance(target, discord.member.Member):
-            for player in self.playerlist:
-                if target == player.member: return player
-            return None
-                
-        if isinstance(target, commands.context.Context):
-            for player in self.playerlist:
-                if target.message.author == player.member: return player #pretty sure this is the only realistic case I can possibly be using ctx
-            return None
-
-        if isinstance(target, Player):
-            for player in self.playerlist:
-                if target == player:
-                    print(f"getplayer was called to find a player... from a player: {target}")
-                    return player
-            return None
-
-        print(f"getplayer just received an invalid input of type {type(target)}: {target}")
-        return None
 
 
     def update_links(self):
