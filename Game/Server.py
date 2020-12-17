@@ -55,7 +55,7 @@ class Server:
         self.game_channels = {}
         missingchannels = []
         for template in ST.AllGameChannels():
-            if channel := discord.utils.get(self.guild.channels, name=template.name, category=template.category):
+            if channel := discord.utils.get(self.guild.channels, name=template.name, category=self.game_category):
                 pass #why the fuck can I not do "if not" with an assignment operator
             else:
                 missingchannels.append(template)
@@ -85,10 +85,12 @@ class Server:
 
         for template in missingchannels:
             channel = await self.guild.create_text_channel(name=template.name, topic=template.topic, category=self.game_category, reason=reason)
+            self.game_channels[template] = channel
             result+=f"Created {channel.mention}...\n"
 
         for template in missingroles:
-            role = await self.guild.create_role(name=template.name, colour=template.color, hoist=template.hoist, reason=reason)
+            role = await self.guild.create_role(name=template.name, colour=template.color, hoist=template.hoisted, reason=reason)
+            self.game_roles[template] = channel
             result+=f"Created {role.mention}...\n"
 
         
