@@ -26,7 +26,7 @@ def to_int(target): #tries to convert to an int. if it fails, it won't generate 
     except: return target
 
 
-def yeetfirstword(yeetstring):
+def yeetfirstword(yeetstring):       #past trigg, what the shit is this
     yeetlist = yeetstring.split(" ") #transform the string into a list
     del yeetlist[0]                  #YEET index 0 (the first word)
     return " ".join(yeetlist)        #return the YEETED string

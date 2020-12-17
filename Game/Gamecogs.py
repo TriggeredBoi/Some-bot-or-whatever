@@ -5,17 +5,6 @@ def setup(bot):
     bot.add_cog(gamecogs(bot))
     print("gamecogs loaded")
 
-"""
-def findserverobj(query, serverlist):
-    if type(query) == commands.context.Context:
-        query = query.guild
-    
-    for server in serverlist:
-        if server.guild == query: return server
-    
-    print(f"findserverobj failed to do its job. Query: {query} (Type: {type(query)})")
-    return False
-"""
 
 class gamecogs(commands.Cog):
     def __init__(self, bot):

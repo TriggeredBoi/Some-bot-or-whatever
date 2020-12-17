@@ -2,8 +2,8 @@ import discord
 import Game.Roles as Roles
 
 class Player:
-    def __init__(self, user: discord.Member):
-        self.member = user
+    def __init__(self, member: discord.Member):
+        self.member = member
         self.name = self.member.display_name
         self.server = self.member.guild #the parent server ref the Player belongs to
         self.servername = self.server.name #the user-friendly name of the server

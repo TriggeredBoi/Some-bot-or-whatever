@@ -68,13 +68,6 @@ def findserverobj(ctx): #returns a Server object from a context
         return server
     else:
         raise AssertionError
-
-    """unused legacy code moment
-    for server in bot.serverlist:
-        if server.guild == ctx.guild: return server
-
-    print ("findserverobj failed to do its job. fuck.")
-    """
     return None
 
 @bot.command()
