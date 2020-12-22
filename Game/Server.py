@@ -83,15 +83,28 @@ class Server:
                                                                   reason=reason)
             result+=f"""Created "{self.game_category.name}" category... (Discord will display it in full uppercase)\n"""
 
+        added_channels = []
         for template in missingchannels:
             channel = await self.guild.create_text_channel(name=template.name, topic=template.topic, category=self.game_category, reason=reason)
+
             self.game_channels[template] = channel
+            added_channels.append((channel, template))
+
             result+=f"Created {channel.mention}...\n"
 
+        #added_roles = []
         for template in missingroles:
             role = await self.guild.create_role(name=template.name, colour=template.color, hoist=template.hoisted, reason=reason)
+
             self.game_roles[template] = channel
+
             result+=f"Created {role.mention}...\n"
+
+        #set permissions (done only now because we need the refs to the roles)
+        for channel, template in added_channels:
+            for roletemplate, overwrite in template().role_permissions.items():
+                role = roletemplate().find(self.guild)
+                await channel.set_permissions(role, overwrite = overwrite)
 
         
         if result == "": await ctx.send("Nothing changed...")

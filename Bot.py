@@ -9,6 +9,7 @@ load_dotenv() #get the token from the .env file. I was told this is a good idea 
 token = os.getenv("DISCORD_TOKEN")
 
 #bot = commands.Bot(command_prefix=commands.when_mentioned_or("$"), case_insensitive = True)
+global bot
 bot = commands.Bot(command_prefix="$", case_insensitive = True)
 print(f"Bot prefix: {bot.command_prefix}")
 
